@@ -36,10 +36,9 @@ pub trait Middleware {
     {
         let state = state.lock()?;
         debug!("State length: {}", state.len());
-        let state = match state.get(&(Self::name(), req_id)) {
-            None => None,
-            Some(state) => Some(state.to_string()),
-        };
+        let state = state
+            .get(&(Self::name(), req_id))
+            .map(|state| state.to_string());
 
         debug!(
             "[{}] State for {}: {:?}",

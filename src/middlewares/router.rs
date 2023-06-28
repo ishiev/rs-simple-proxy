@@ -58,7 +58,16 @@ fn get_host_and_path(req: &mut Request<Body>) -> Result<(String, String), Middle
     match uri.host() {
         Some(host) => Ok((String::from(host), path)),
         None => Ok((
-            String::from(req.headers().get("host").unwrap().to_str()?),
+            String::from(
+                req.headers()
+                    .get("host")
+                    .ok_or(MiddlewareError::new(
+                        "Bad request, no host found".to_string(), 
+                        None, 
+                        StatusCode::BAD_REQUEST
+                    ))?
+                    .to_str()?
+            ),
             path,
         )),
     }
